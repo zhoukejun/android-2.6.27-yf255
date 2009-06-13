@@ -39,6 +39,11 @@ config ARCH_LUBBOCK
 	select PXA25x
 	select SA1111
 
+config ARCH_YF255
+	bool "YFDVK-255-I Development Platform"
+	select PXA25x
+	select SA1111
+
 config MACH_LOGICPD_PXA270
 	bool "LogicPD PXA270 Card Engine Development Platform"
 	select PXA27x

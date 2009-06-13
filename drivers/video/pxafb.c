@@ -309,7 +309,7 @@ static void pxafb_setmode(struct fb_var_screeninfo *var,
 	var->sync		= mode->sync;
 	var->grayscale		= mode->cmap_greyscale;
 	var->xres_virtual 	= var->xres;
-	var->yres_virtual	= var->yres;
+	var->yres_virtual	= var->yres * 2;
 }
 
 /*
@@ -350,7 +350,7 @@ static int pxafb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
 	var->xres_virtual =
 		max(var->xres_virtual, var->xres);
 	var->yres_virtual =
-		max(var->yres_virtual, var->yres);
+		max(var->yres_virtual, var->yres * 2);
 
 	/*
 	 * Setup the RGB parameters for this display.

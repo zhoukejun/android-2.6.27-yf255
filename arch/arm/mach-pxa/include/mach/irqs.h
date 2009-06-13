@@ -196,6 +196,18 @@
  * Board specific IRQs.  Define them here.
  * Do not surround them with ifdefs.
  */
+#define YF255_IRQ(x)		(IRQ_BOARD_START + (x))
+#define YF255_ETH_IRQ		YF255_IRQ(0) 
+#define YF255_SA1111_IRQ	YF255_IRQ(1)
+#define YF255_USB_IRQ		YF255_IRQ(2)
+#define YF255_UCB1400_IRQ	YF255_IRQ(3)
+#define YF255_BB_IRQ		YF255_IRQ(5)
+#define YF255_LAST_IRQ		YF255_IRQ(5)
+#ifdef CONFIG_MACH_YF255
+#undef NR_IRQS
+#define NR_IRQS			(YF255_IRQ(5) + 1)
+#endif
+
 #define LUBBOCK_IRQ(x)		(IRQ_BOARD_START + (x))
 #define LUBBOCK_SD_IRQ		LUBBOCK_IRQ(0)
 #define LUBBOCK_SA1111_IRQ	LUBBOCK_IRQ(1)

@@ -96,7 +96,7 @@ struct ucb1400 {
 
 static int adcsync;
 static int ts_delay = 55; /* us */
-static int ts_delay_pressure;	/* us */
+static int ts_delay_pressure; /* us */
 
 static inline u16 ucb1400_reg_read(struct ucb1400 *ucb, u16 reg)
 {
@@ -255,12 +255,14 @@ static void ucb1400_ts_evt_add(struct input_dev *idev, u16 pressure, u16 x, u16 
 	input_report_abs(idev, ABS_X, x);
 	input_report_abs(idev, ABS_Y, y);
 	input_report_abs(idev, ABS_PRESSURE, pressure);
+	input_report_key(idev, BTN_TOUCH, 1);
 	input_sync(idev);
 }
 
 static void ucb1400_ts_event_release(struct input_dev *idev)
 {
 	input_report_abs(idev, ABS_PRESSURE, 0);
+	input_report_key(idev, BTN_TOUCH, 0);
 	input_sync(idev);
 }
 
@@ -306,6 +308,13 @@ static int ucb1400_ts_thread(void *_ucb)
 		y = ucb1400_ts_read_ypos(ucb);
 		p = ucb1400_ts_read_pressure(ucb);
 		ucb1400_adc_disable(ucb);
+
+		x = x < 70 ? x >> 3 : (x - 70) * 480 / 850;
+		x = x > 480 ? 480 : x;
+
+		y = y < 140 ? y >> 4 : ((y - 140) * 272) / 700;
+		y = y > 272 ? 272 : y;
+		y = 272 - y;
 
 		/* Switch back to interrupt mode. */
 		ucb1400_ts_mode_int(ucb);
@@ -511,7 +520,8 @@ static int ucb1400_ts_probe(struct device *dev)
 	idev->id.product	= id;
 	idev->open		= ucb1400_ts_open;
 	idev->close		= ucb1400_ts_close;
-	idev->evbit[0]		= BIT_MASK(EV_ABS);
+	idev->evbit[0]		= BIT_MASK(EV_KEY) | BIT_MASK(EV_ABS);
+	idev->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
 
 	ucb1400_adc_enable(ucb);
 	x_res = ucb1400_ts_read_xres(ucb);
@@ -519,9 +529,9 @@ static int ucb1400_ts_probe(struct device *dev)
 	ucb1400_adc_disable(ucb);
 	printk(KERN_DEBUG "UCB1400: x/y = %d/%d\n", x_res, y_res);
 
-	input_set_abs_params(idev, ABS_X, 0, x_res, 0, 0);
-	input_set_abs_params(idev, ABS_Y, 0, y_res, 0, 0);
-	input_set_abs_params(idev, ABS_PRESSURE, 0, 0, 0, 0);
+	input_set_abs_params(idev, ABS_X, 0, 480, 4, 8);
+	input_set_abs_params(idev, ABS_Y, 0, 272, 4, 8);
+	input_set_abs_params(idev, ABS_PRESSURE, 0, 1, 0, 0);//10, 640, 4, 8);
 
 	error = input_register_device(idev);
 	if (error)

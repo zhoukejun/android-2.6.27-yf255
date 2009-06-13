@@ -121,7 +121,9 @@ start:
 		.word	0x016f2818		@ Magic numbers to help the loader
 		.word	start			@ absolute load/run zImage address
 		.word	_edata			@ zImage end address
-1:		mov	r7, r1			@ save architecture ID
+1:		@mov	r7, r1		@zkj	@ save architecture ID
+		@mov	r7, #0x59	@zkj	@ save architecture ID
+		ldr	r7, =0x752	@zkj	@ save architecture ID
 		mov	r8, r2			@ save atags pointer
 
 #ifndef __ARM_ARCH_2__

@@ -972,6 +972,22 @@ config SMC911X
 	  called smc911x.  If you want to compile it as a module, say M 
 	  here and read <file:Documentation/kbuild/modules.txt>
 
+config LAN91C113
+	tristate "SMSC LAN91C113 support"
+	select CRC32
+	select MII
+	depends on ARCH_PXA || SUPERH
+	help
+	  This is a driver for SMSC's LAN91C113 Ethernet chipsets.
+	  For YFDVK-255-I development board
+	  Say Y if you want it compiled into the kernel, 
+	  and read the Ethernet-HOWTO, available from
+	  <http://www.linuxdoc.org/docs.html#howto>.
+
+	  This driver is also available as a module. The module will be 
+	  called lan91c113.  If you want to compile it as a module, say M 
+	  here and read <file:Documentation/kbuild/modules.txt>
+
 config NET_VENDOR_RACAL
 	bool "Racal-Interlan (Micom) NI cards"
 	depends on ISA
